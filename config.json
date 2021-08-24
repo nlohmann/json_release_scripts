@@ -1,0 +1,12 @@
+{
+  "GITHUB_AUTH": {
+    "user": "nlohmann",
+    "key": ""
+  },
+
+  "GITHUB_TOKEN": "",
+
+  "VERSION_MAJOR": "3",
+  "VERSION_MINOR": "10",
+  "VERSION_PATCH": "2"
+}
