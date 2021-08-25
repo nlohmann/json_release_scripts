@@ -14,6 +14,7 @@ git flow release finish $NEXT_VERSION
 git checkout master
 git pull
 git push
+git push --tags
 
 git checkout develop
 git pull
