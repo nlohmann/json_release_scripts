@@ -111,7 +111,7 @@ update_changelog:
 	@echo " Update changelog"
 	@echo "================================================================="
 	@echo ""
-	cd scripts/changelog ; test -f ChangeLog.md || ./build.sh
+	cd scripts/changelog ; ./build.sh
 	cp scripts/changelog/ChangeLog.md workdir/json
 	cd workdir/json ; git add ChangeLog.md
 
