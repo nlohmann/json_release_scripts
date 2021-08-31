@@ -171,6 +171,15 @@ close_branches:
 	@echo ""
 	cd scripts/close_branches ; ./close_branches.sh
 
+update_homebrew:
+	@echo ""
+	@echo ""
+	@echo "================================================================="
+	@echo " Closing branches"
+	@echo "================================================================="
+	@echo ""
+	cd scripts/update_homebrew ; ./update_homebrew.sh
+
 ##########################################################
 # cleanup
 ##########################################################

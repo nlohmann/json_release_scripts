@@ -55,13 +55,17 @@
 
    - [ ] Go to <https://github.com/nlohmann/json/releases> and publish the release. Remember to tick the "Create a discussion for this release" checkbox.
 
-13. Clean up discussions.
+13. Create PR for Homebrew formula.
+
+   - [ ] Execute `make update_homebrew`.
+
+14. Clean up discussions.
 
    - [ ] Unpin posts.
    - [ ] Close WIP post.
    - [ ] Create WIP post for next release.
    - [ ] Pin post for current release.
 
-14. Close current and create a new milestone.
+15. Close current and create a new milestone.
 
    - [ ] Go to <https://github.com/nlohmann/json/milestones>.
