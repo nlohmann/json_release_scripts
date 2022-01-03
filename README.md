@@ -2,7 +2,7 @@
 
 ## Preparations
 
-- Install required tools: `make install_requirements`.
+- Install required tools: `make install_requirements`. Do not worry about a warning on Ruby not being in the `PATH`.
 - Add required keys to `config.json` (apparently not checked in to GitHub).
 
 ## Release Checklist

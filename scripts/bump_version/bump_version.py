@@ -66,11 +66,10 @@ def patch_release(path) -> List[str]:
     # other files #
     ###############
 
-    patched_files += ['CMakeLists.txt', 'doc/Doxyfile', 'doc/index.md', 'meson.build',
+    patched_files += ['CMakeLists.txt', 'doc/index.md', 'meson.build',
                       'wsjcpp.yml', '.github/ISSUE_TEMPLATE/Bug_report.md', 'CITATION.cff']
 
     version_replace('CMakeLists.txt', None, 'project(nlohmann_json', VERSION)
-    version_replace('doc/Doxyfile', None, 'PROJECT_NUMBER', VERSION)
     version_replace('doc/index.md', None, '@version', VERSION)
     version_replace('meson.build', None, 'version', VERSION)
     version_replace('wsjcpp.yml', None, 'version: "v3', VERSION)

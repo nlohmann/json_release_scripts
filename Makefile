@@ -14,7 +14,7 @@ all:
 install_requirements: homebrew_tools python_tools ruby_tools
 
 homebrew_tools:
-	brew install imagemagick python3 gnu-sed jq
+	brew install imagemagick python3 gnu-sed jq git-flow coreutils
 
 python_tools:
 	rm -fr venv
@@ -22,7 +22,7 @@ python_tools:
 	venv/bin/pip3 install -r requirements.txt
 
 ruby_tools:
-	gem install github_changelog_generator
+	gem install github_changelog_generator --user-install
 
 uninstall_requirements:
 	rm -fr venv
@@ -32,7 +32,7 @@ uninstall_requirements:
 ##########################################################
 
 # do anything that can be done automatically
-pass_1: clone_repository create_release_branch update_slideshow bump_version update_readme_link
+pass_1: clone_repository create_release_branch update_slideshow bump_version
 
 # finalize release
 pass_2: update_changelog update_avatars check_documentation commit_changes
