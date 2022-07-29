@@ -28,7 +28,7 @@ def create_github_release(path: str):
     """draft a release at GitHub"""
 
     release_text = """Release date: {date}
-SHA-256: {header_hash} (json.hpp), {include_hash} (include.zip)
+SHA-256: {header_hash} (json.hpp), {include_hash} (include.zip), {xz_hash} (json.tar.xz)
 
 ### Summary
 
@@ -46,7 +46,8 @@ SHA-256: {header_hash} (json.hpp), {include_hash} (include.zip)
 
 """.format(date=datetime.date.today().isoformat(),
            header_hash=sha256_checksum(os.path.join(path, 'release_files/json.hpp')),
-           include_hash=sha256_checksum(os.path.join(path, 'release_files/include.zip')))
+           include_hash=sha256_checksum(os.path.join(path, 'release_files/include.zip')),
+           xz_hash=sha256_checksum(os.path.join(path, 'release_files/json.tar.xz')))
 
     payload = {
         'tag_name': 'v{version}'.format(version=VERSION),
@@ -69,7 +70,9 @@ SHA-256: {header_hash} (json.hpp), {include_hash} (include.zip)
         {'name': 'json.hpp', 'Content-Type': 'application/octet-stream'},
         {'name': 'json.hpp.asc', 'Content-Type': 'application/octet-stream'},
         {'name': 'include.zip', 'Content-Type': 'application/zip'},
-        {'name': 'include.zip.asc', 'Content-Type': 'application/octet-stream'}
+        {'name': 'include.zip.asc', 'Content-Type': 'application/octet-stream'},
+        {'name': 'json.tar.xz', 'Content-Type': 'application/x-xz'},
+        {'name': 'json.tar.xz.asc', 'Content-Type': 'application/octet-stream'}
     ]
 
     for file in files_to_upload:
