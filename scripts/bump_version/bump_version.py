@@ -15,7 +15,11 @@ VERSION_PATCH = CONFIG['VERSION_PATCH']
 VERSION = f"{VERSION_MAJOR}.{VERSION_MINOR}.{VERSION_PATCH}"
 
 
-def version_replace(filename: str, version_line_number: Optional[int], marker_string: str, version_string: str, regex=r'\d+\.\d+\.\d+'):
+def version_replace(filename: str,
+                    version_line_number: Optional[int],
+                    marker_string: str,
+                    version_string: str,
+                    regex=r'\d+\.\d+\.\d+'):
     """replace version entries by the new version"""
     print(f"patching {filename}")
     # read file
@@ -28,15 +32,15 @@ def version_replace(filename: str, version_line_number: Optional[int], marker_st
                 version_line_number = content_line_number
                 break
 
-    assert version_line_number is not None, 'no version line number given, and no line with marker string found'
+    assert version_line_number is not None, f'{filename}: no version line number given, and no line with marker string "{marker_string}" found'
 
     # the version should be in the n-th line
     version_line = content_lines[version_line_number]
-    assert marker_string in version_line, 'marker string was not found in version line'
+    assert marker_string in version_line, f'{filename}: marker string "{marker_string}" was not found in version line {version_line_number}'
 
     # replace version
     new_version_line = re.sub(regex, version_string, version_line)
-    assert version_string in new_version_line, 'replacement failed'
+    assert version_string in new_version_line, f'{filename}: replacement failed with marker string "{marker_string}"'
 
     # add new line to file
     new_file = content_lines[0:version_line_number] + [new_version_line] + content_lines[version_line_number + 1:]
@@ -56,31 +60,31 @@ def patch_release(path) -> List[str]:
     # source files #
     ################
 
-    files = glob.glob('*/nlohmann/json.hpp') + glob.glob('test/src/*.cpp', recursive=True)
+    files = glob.glob('*/nlohmann/json.hpp') + glob.glob('tests/src/*.cpp', recursive=True)
     patched_files += files
 
     for file in files:
-        version_replace(file, 3, 'version', VERSION)
+        version_replace(file, 2, 'version', VERSION)
 
     ###############
     # other files #
     ###############
 
-    patched_files += ['CMakeLists.txt', 'doc/index.md', 'meson.build',
-                      'wsjcpp.yml', '.github/ISSUE_TEMPLATE/Bug_report.md', 'CITATION.cff']
+    patched_files += ['CMakeLists.txt', 'docs/index.md', 'meson.build',
+                      'wsjcpp.yml', '.github/ISSUE_TEMPLATE/bug.yaml', 'CITATION.cff']
 
     version_replace('CMakeLists.txt', None, 'project(nlohmann_json', VERSION)
-    version_replace('doc/index.md', None, '@version', VERSION)
+    version_replace('docs/index.md', None, '@version', VERSION)
     version_replace('meson.build', None, 'version', VERSION)
     version_replace('wsjcpp.yml', None, 'version: "v3', VERSION)
-    version_replace('.github/ISSUE_TEMPLATE/Bug_report.md', None, 'latest release version', VERSION)
+    version_replace('.github/ISSUE_TEMPLATE/bug.yaml', None, 'please enter the version number', VERSION)
     version_replace('CITATION.cff', None, 'version: 3', VERSION)
 
     ##########################
     # meta() test and output #
     ##########################
 
-    files = ['test/src/unit-meta.cpp', 'doc/examples/meta.output']
+    files = ['tests/src/unit-meta.cpp', 'docs/examples/meta.output']
     patched_files += files
 
     for file in files:
@@ -98,9 +102,9 @@ def patch_release(path) -> List[str]:
 
     for file in files:
         version_replace(file, None, '961c151d2e87f2686a955a9be24d316f1362bf21', VERSION)
-        version_replace(file, None, 'NLOHMANN_JSON_VERSION_MAJOR', VERSION_MAJOR, regex=r'\d+')
-        version_replace(file, None, 'NLOHMANN_JSON_VERSION_MINOR', VERSION_MINOR, regex=r'\d+')
-        version_replace(file, None, 'NLOHMANN_JSON_VERSION_PATCH', VERSION_PATCH, regex=r'\d+')
+        version_replace(file, None, '#define NLOHMANN_JSON_VERSION_MAJOR', VERSION_MAJOR, regex=r'\d+')
+        version_replace(file, None, '#define NLOHMANN_JSON_VERSION_MINOR', VERSION_MINOR, regex=r'\d+')
+        version_replace(file, None, '#define NLOHMANN_JSON_VERSION_PATCH', VERSION_PATCH, regex=r'\d+')
 
     return list(set(patched_files))
 

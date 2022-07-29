@@ -72,8 +72,8 @@ update_slideshow:
 	@echo "================================================================="
 	@echo ""
 	make json.gif -C scripts/slideshow
-	cp scripts/slideshow/json.gif workdir/json/doc
-	cd workdir/json ; git add doc/json.gif
+	cp scripts/slideshow/json.gif workdir/json/docs
+	cd workdir/json ; git add docs/json.gif
 
 bump_version:
 	@echo ""
@@ -102,8 +102,8 @@ update_avatars:
 	@echo ""
 	mkdir -p scripts/avatars/cache
 	cd scripts/avatars ; test -f avatars.png || ../../venv/bin/python3 avatars.py ../../workdir/json/README.md
-	cp scripts/avatars/avatars.png workdir/json/doc/avatars.png
-	cd workdir/json ; git add doc/avatars.png
+	cp scripts/avatars/avatars.png workdir/json/docs/avatars.png
+	cd workdir/json ; git add docs/avatars.png
 
 update_changelog:
 	@echo ""
@@ -123,7 +123,7 @@ check_documentation:
 	@echo " Check examples"
 	@echo "================================================================="
 	@echo ""
-	make check_output -j16 -C workdir/json/doc
+	make check_output -j16 -C workdir/json/docs
 
 commit_changes:
 	@echo ""
@@ -161,7 +161,7 @@ upload_documentation:
 	@echo " Upload documentation"
 	@echo "================================================================="
 	@echo ""
-	make install_venv publish -C workdir/json/doc/mkdocs
+	make install_venv publish -C workdir/json/docs/mkdocs
 
 close_branches:
 	@echo ""
