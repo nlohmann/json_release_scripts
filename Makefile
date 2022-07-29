@@ -14,7 +14,7 @@ all:
 install_requirements: homebrew_tools python_tools ruby_tools
 
 homebrew_tools:
-	brew install imagemagick python3 gnu-sed jq git-flow coreutils
+	brew install imagemagick python3 gnu-sed jq git-flow-avh coreutils
 
 python_tools:
 	rm -fr venv
