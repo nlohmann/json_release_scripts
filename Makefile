@@ -82,6 +82,8 @@ bump_version:
 	@echo " Bump version"
 	@echo "================================================================="
 	@echo ""
+	rm workdir/json/docs/examples/meta.output workdir/json/docs/examples/nlohmann_json_version.output
+	make -C workdir/json/docs
 	cd scripts/bump_version	; ../../venv/bin/python3 bump_version.py ../../workdir/json
 
 update_readme_link:

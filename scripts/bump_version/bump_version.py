@@ -71,7 +71,8 @@ def patch_release(path) -> List[str]:
     ###############
 
     patched_files += ['CMakeLists.txt', 'docs/index.md', 'meson.build',
-                      'wsjcpp.yml', '.github/ISSUE_TEMPLATE/bug.yaml', 'CITATION.cff']
+                      'wsjcpp.yml', '.github/ISSUE_TEMPLATE/bug.yaml', 'CITATION.cff',
+                      'docs/examples/nlohmann_json_version.output']
 
     version_replace('CMakeLists.txt', None, 'project(nlohmann_json', VERSION)
     version_replace('docs/index.md', None, '@version', VERSION)
@@ -79,6 +80,7 @@ def patch_release(path) -> List[str]:
     version_replace('wsjcpp.yml', None, 'version: "v3', VERSION)
     version_replace('.github/ISSUE_TEMPLATE/bug.yaml', None, 'please enter the version number', VERSION)
     version_replace('CITATION.cff', None, 'version: 3', VERSION)
+    version_replace('docs/examples/nlohmann_json_version.output', None, 'version', VERSION)
 
     ##########################
     # meta() test and output #
