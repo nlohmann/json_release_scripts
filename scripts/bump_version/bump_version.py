@@ -104,9 +104,20 @@ def patch_release(path) -> List[str]:
 
     for file in files:
         version_replace(file, None, '961c151d2e87f2686a955a9be24d316f1362bf21', VERSION)
+
+    ######################
+    # version definition #
+    ######################
+
+    files = ['single_include/nlohmann/json.hpp', 'include/nlohmann/detail/abi_macros.hpp']
+    patched_files += files
+    for file in files:
+        # definition of the version
         version_replace(file, None, '#define NLOHMANN_JSON_VERSION_MAJOR', VERSION_MAJOR, regex=r'\d+')
         version_replace(file, None, '#define NLOHMANN_JSON_VERSION_MINOR', VERSION_MINOR, regex=r'\d+')
         version_replace(file, None, '#define NLOHMANN_JSON_VERSION_PATCH', VERSION_PATCH, regex=r'\d+')
+        # version check
+        version_replace(file, None, '#if NLOHMANN_JSON_VERSION_MAJOR !=', f'#if NLOHMANN_JSON_VERSION_MAJOR != {VERSION_MAJOR} || NLOHMANN_JSON_VERSION_MINOR != {VERSION_MINOR} || NLOHMANN_JSON_VERSION_PATCH != {VERSION_PATCH}', regex=r'.+')
 
     return list(set(patched_files))
 
