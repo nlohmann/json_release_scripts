@@ -123,7 +123,7 @@ check_documentation:
 	@echo " Check examples"
 	@echo "================================================================="
 	@echo ""
-	make check_output -j16 -C workdir/json/docs
+	make check_output_portable -j16 -C workdir/json/docs CXX=g++-11
 
 commit_changes:
 	@echo ""
