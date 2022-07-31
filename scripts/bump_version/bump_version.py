@@ -73,7 +73,7 @@ def patch_release(path):
     version_replace('docs/examples/nlohmann_json_version.output', None, 'version', VERSION)
     version_replace('README.md', None, 'FetchContent_Declare', VERSION)
     version_replace('docs/docset/docset.json', None, 'version', VERSION)
-    version_replace('docs/mkdocs/docs/integration/cmake.md', None, 'find_package(nlohmann_json', VERSION)
+    version_replace('docs/mkdocs/docs/integration/cmake.md', None, '        find_package(nlohmann_json', VERSION)
     version_replace('docs/mkdocs/docs/integration/cmake.md', None, 'find_package(nlohmann_json', VERSION)
     version_replace('docs/mkdocs/docs/integration/cmake.md', None, 'FetchContent_Declare', VERSION)
     version_replace('docs/mkdocs/docs/integration/cmake.md', None, 'GIT_TAG', VERSION)
