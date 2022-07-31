@@ -1,10 +1,10 @@
+import glob
 import sys
 from typing import List, Optional
 import json
 import os.path
 import os
 import codecs
-import glob
 import re
 import subprocess
 
@@ -49,83 +49,82 @@ def version_replace(filename: str,
     codecs.open(filename, 'w', encoding='UTF-8').writelines(new_file)
 
 
-def patch_release(path) -> List[str]:
+def patch_release(path):
     """bump the version numbers in the repository files"""
 
     os.chdir(path)
 
-    patched_files = []
+    ###################
+    # REUSE templates #
+    ###################
 
-    ################
-    # source files #
-    ################
-
-    files = glob.glob('*/nlohmann/json.hpp') + glob.glob('tests/src/*.cpp', recursive=True)
-    patched_files += files
-
-    for file in files:
-        version_replace(file, 2, 'version', VERSION)
+    version_replace('.reuse/templates/json.jinja2', None, 'version', VERSION)
+    version_replace('.reuse/templates/json_support.jinja2', None, 'version', VERSION)
 
     ###############
     # other files #
     ###############
 
-    patched_files += ['CMakeLists.txt', 'docs/index.md', 'meson.build',
-                      'wsjcpp.yml', '.github/ISSUE_TEMPLATE/bug.yaml', 'CITATION.cff',
-                      'docs/examples/nlohmann_json_version.output']
-
     version_replace('CMakeLists.txt', None, 'project(nlohmann_json', VERSION)
-    version_replace('docs/index.md', None, '@version', VERSION)
     version_replace('meson.build', None, 'version', VERSION)
     version_replace('wsjcpp.yml', None, 'version: "v3', VERSION)
     version_replace('.github/ISSUE_TEMPLATE/bug.yaml', None, 'please enter the version number', VERSION)
     version_replace('CITATION.cff', None, 'version: 3', VERSION)
     version_replace('docs/examples/nlohmann_json_version.output', None, 'version', VERSION)
 
-    ##########################
-    # meta() test and output #
-    ##########################
+    ###############
+    # meta() test #
+    ###############
 
-    files = ['tests/src/unit-meta.cpp', 'docs/examples/meta.output']
-    patched_files += files
-
-    for file in files:
-        version_replace(file, None, '"string"', VERSION)
-        version_replace(file, None, '"major"', VERSION_MAJOR, regex=r'\d+')
-        version_replace(file, None, '"minor"', VERSION_MINOR, regex=r'\d+')
-        version_replace(file, None, '"patch"', VERSION_PATCH, regex=r'\d+')
+    version_replace('tests/src/unit-meta.cpp', None, '"string"', VERSION)
+    version_replace('tests/src/unit-meta.cpp', None, '"major"', VERSION_MAJOR, regex=r'\d+')
+    version_replace('tests/src/unit-meta.cpp', None, '"minor"', VERSION_MINOR, regex=r'\d+')
+    version_replace('tests/src/unit-meta.cpp', None, '"patch"', VERSION_PATCH, regex=r'\d+')
 
     ################
     # magic string #
     ################
 
-    files = glob.glob('*/nlohmann/json.hpp')
-    patched_files += files
-
-    for file in files:
-        version_replace(file, None, '961c151d2e87f2686a955a9be24d316f1362bf21', VERSION)
+    version_replace('include/nlohmann/json.hpp', None, '961c151d2e87f2686a955a9be24d316f1362bf21', VERSION)
 
     ######################
     # version definition #
     ######################
 
-    files = ['single_include/nlohmann/json.hpp', 'include/nlohmann/detail/abi_macros.hpp']
-    patched_files += files
-    for file in files:
-        # definition of the version
-        version_replace(file, None, '#define NLOHMANN_JSON_VERSION_MAJOR', VERSION_MAJOR, regex=r'\d+')
-        version_replace(file, None, '#define NLOHMANN_JSON_VERSION_MINOR', VERSION_MINOR, regex=r'\d+')
-        version_replace(file, None, '#define NLOHMANN_JSON_VERSION_PATCH', VERSION_PATCH, regex=r'\d+')
-        # version check
-        version_replace(file, None, '#if NLOHMANN_JSON_VERSION_MAJOR !=', f'#if NLOHMANN_JSON_VERSION_MAJOR != {VERSION_MAJOR} || NLOHMANN_JSON_VERSION_MINOR != {VERSION_MINOR} || NLOHMANN_JSON_VERSION_PATCH != {VERSION_PATCH}', regex=r'.+')
-
-    return list(set(patched_files))
+    # definition of the version
+    version_replace('include/nlohmann/detail/abi_macros.hpp', None, '#define NLOHMANN_JSON_VERSION_MAJOR', VERSION_MAJOR, regex=r'\d+')
+    version_replace('include/nlohmann/detail/abi_macros.hpp', None, '#define NLOHMANN_JSON_VERSION_MINOR', VERSION_MINOR, regex=r'\d+')
+    version_replace('include/nlohmann/detail/abi_macros.hpp', None, '#define NLOHMANN_JSON_VERSION_PATCH', VERSION_PATCH, regex=r'\d+')
+    # version check
+    version_replace('include/nlohmann/detail/abi_macros.hpp', None, '#if NLOHMANN_JSON_VERSION_MAJOR !=', f'#if NLOHMANN_JSON_VERSION_MAJOR != {VERSION_MAJOR} || NLOHMANN_JSON_VERSION_MINOR != {VERSION_MINOR} || NLOHMANN_JSON_VERSION_PATCH != {VERSION_PATCH}', regex=r'.+')
 
 
 if __name__ == '__main__':
     path = sys.argv[1]
-    patched_files = patch_release(path)
 
-    for patched_file in patched_files:
-        print(f'adding file {patched_file} to git')
-        subprocess.check_output(['git', 'add', patched_file])
+    # patch files
+    patch_release(path)
+
+    # call REUSE to patch copyright headers
+    print('adding new copyright headers')
+    subprocess.check_output(['make', 'reuse'], cwd=path)
+
+    # create single-header file
+    print('creating single-header file')
+    os.remove(os.path.join(path, 'single_include/nlohmann/json.hpp'))
+    subprocess.check_output(['make', 'amalgamate'], cwd=path)
+
+    # remove output files
+    print('removing example output files')
+    for f in glob.glob(os.path.join(path, 'docs', 'examples', '*.output')):
+        os.remove(f)
+
+    # re-generate output
+    print('re-generating example output files')
+    # Xcode has issues with C++20 constructs, so we use Homebrew's GCC
+    env = {'CXX': 'g++-11', 'PATH': '/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin'}
+    res = subprocess.check_output(['make', 'create_output', '-j16'], cwd=os.path.join(path, 'docs'), env=env)
+    assert res, 're-generating example output files failed'
+
+    # add changed files to git
+    subprocess.check_output(['git', 'add', '-u'])
