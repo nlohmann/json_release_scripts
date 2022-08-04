@@ -84,15 +84,6 @@ bump_version:
 	@echo ""
 	cd scripts/bump_version	; ../../venv/bin/python3 bump_version.py ../../workdir/json
 
-update_readme_link:
-	@echo ""
-	@echo ""
-	@echo "================================================================="
-	@echo " Update README link"
-	@echo "================================================================="
-	@echo ""
-	cd scripts/update_readme_link ; ../../venv/bin/python3 update_readme_link.py ../../workdir/json
-
 update_avatars:
 	@echo ""
 	@echo ""
