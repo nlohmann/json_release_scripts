@@ -114,7 +114,7 @@ check_documentation:
 	@echo " Check examples"
 	@echo "================================================================="
 	@echo ""
-	make check_output_portable -j16 -C workdir/json/docs CXX=g++-11
+	make check_output_portable -j16 -C workdir/json/docs CXX=g++-12
 
 commit_changes:
 	@echo ""
