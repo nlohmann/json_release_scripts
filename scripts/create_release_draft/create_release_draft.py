@@ -69,6 +69,8 @@ SHA-256: {header_hash} (json.hpp), {include_hash} (include.zip), {xz_hash} (json
     files_to_upload = [
         {'name': 'json.hpp', 'Content-Type': 'application/octet-stream'},
         {'name': 'json.hpp.asc', 'Content-Type': 'application/octet-stream'},
+        {'name': 'json_fwd.hpp', 'Content-Type': 'application/octet-stream'},
+        {'name': 'json_fwd.hpp.asc', 'Content-Type': 'application/octet-stream'},
         {'name': 'include.zip', 'Content-Type': 'application/zip'},
         {'name': 'include.zip.asc', 'Content-Type': 'application/octet-stream'},
         {'name': 'json.tar.xz', 'Content-Type': 'application/x-xz'},
