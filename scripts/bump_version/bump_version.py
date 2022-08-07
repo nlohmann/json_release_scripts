@@ -1,3 +1,4 @@
+import datetime
 import glob
 import sys
 from typing import List, Optional
@@ -104,6 +105,11 @@ def patch_release(path):
     # version check
     version_replace('include/nlohmann/detail/abi_macros.hpp', None, '#if NLOHMANN_JSON_VERSION_MAJOR !=', f'#if NLOHMANN_JSON_VERSION_MAJOR != {VERSION_MAJOR} || NLOHMANN_JSON_VERSION_MINOR != {VERSION_MINOR} || NLOHMANN_JSON_VERSION_PATCH != {VERSION_PATCH}', regex=r'.+')
 
+    ################################
+    # release date in CITATION.cff #
+    ################################
+    version_replace('CITATION.cff', None, 'date-released:', datetime.date.today().isoformat(), regex=r'\d+-\d+-\d+')
+
 
 if __name__ == '__main__':
     path = sys.argv[1]
@@ -118,6 +124,7 @@ if __name__ == '__main__':
     # create single-header file
     print('creating single-header file')
     os.remove(os.path.join(path, 'single_include/nlohmann/json.hpp'))
+    os.remove(os.path.join(path, 'single_include/nlohmann/json_fwd.hpp'))
     subprocess.check_output(['make', 'amalgamate'], cwd=path)
 
     # remove output files
@@ -128,7 +135,7 @@ if __name__ == '__main__':
     # re-generate output
     print('re-generating example output files')
     # Xcode has issues with C++20 constructs, so we use Homebrew's GCC
-    env = {'CXX': 'g++-11', 'PATH': '/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin'}
+    env = {'CXX': 'g++-12', 'PATH': '/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin'}
     res = subprocess.check_output(['make', 'create_output', '-j16'], cwd=os.path.join(path, 'docs'), env=env)
     assert res, 're-generating example output files failed'
 
