@@ -92,7 +92,7 @@ update_avatars:
 	@echo "================================================================="
 	@echo ""
 	mkdir -p scripts/avatars/cache
-	cd scripts/avatars ; test -f avatars.png || ../../venv/bin/python3 avatars.py ../../workdir/json/README.md
+	cd scripts/avatars ; ../../venv/bin/python3 avatars.py ../../workdir/json/README.md
 	cp scripts/avatars/avatars.png workdir/json/docs/avatars.png
 	cd workdir/json ; git add docs/avatars.png
 
