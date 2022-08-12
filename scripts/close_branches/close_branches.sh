@@ -9,7 +9,9 @@ NEXT_VERSION="$VERSION_MAJOR.$VERSION_MINOR.$VERSION_PATCH"
 
 cd ../../workdir/json
 
-git flow release finish $NEXT_VERSION
+export GIT_MERGE_AUTOEDIT=no
+git flow release finish $NEXT_VERSION -m "JSON for Modern C++ $NEXT_VERSION"
+unset GIT_MERGE_AUTOEDIT
 
 git checkout master
 git pull
