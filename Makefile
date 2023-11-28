@@ -35,7 +35,8 @@ uninstall_requirements:
 pass_1: clone_repository create_release_branch update_slideshow bump_version
 
 # finalize release
-pass_2: update_changelog update_avatars check_documentation commit_changes
+#pass_2: update_changelog update_avatars check_documentation commit_changes
+pass_2: update_avatars check_documentation commit_changes
 
 # upload changes
 pass_3: push_changes create_release_draft

@@ -55,7 +55,7 @@ def create_large_image():
     y_index = 0
     for image_idx, image_file in enumerate(image_files):
         img = Image.open(image_file)
-        img.thumbnail((size, size), Image.ANTIALIAS)
+        img.thumbnail((size, size), Image.LANCZOS)
 
         x_index += size
         if x_index == result.size[0]:

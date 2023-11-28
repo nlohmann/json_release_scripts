@@ -125,7 +125,12 @@ if __name__ == '__main__':
     print('creating single-header file')
     os.remove(os.path.join(path, 'single_include/nlohmann/json.hpp'))
     os.remove(os.path.join(path, 'single_include/nlohmann/json_fwd.hpp'))
-    subprocess.check_output(['make', 'amalgamate'], cwd=path)
+    #subprocess.check_output(['make', 'amalgamate'], cwd=path)
+    # three lines below are a fix to the astyle call
+    subprocess.check_output(['make', 'single_include/nlohmann/json.hpp'], cwd=path)
+    subprocess.check_output(['make', 'single_include/nlohmann/json_fwd.hpp'], cwd=path)
+    amalgated_files = list(glob.glob('include/**/*.hpp', recursive=True)) + list(glob.glob('include/**/*.hpp', recursive=True)) + ['single_include/nlohmann/json.hpp', 'single_include/nlohmann/json_fwd.hpp']
+    subprocess.check_output(['/Users/niels/Downloads/astyle/build/astyle', '--style=allman', '--indent=spaces=4', '--indent-modifiers', '--indent-switches', '--indent-preproc-block', '--indent-preproc-define', '--indent-col1-comments', '--pad-oper', '--pad-header', '--align-pointer=type', '--align-reference=type', '--add-braces', '--convert-tabs', '--close-templates', '--lineend=linux', '--preserve-date', '--suffix=none', '--formatted'] + amalgated_files, cwd=path)
 
     # remove output files
     print('removing example output files')

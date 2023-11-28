@@ -1,6 +1,5 @@
 import datetime
 import requests
-from requests.auth import HTTPBasicAuth
 import hashlib
 import json
 import os.path
@@ -11,9 +10,14 @@ VERSION_MAJOR = CONFIG['VERSION_MAJOR']
 VERSION_MINOR = CONFIG['VERSION_MINOR']
 VERSION_PATCH = CONFIG['VERSION_PATCH']
 VERSION = f"{VERSION_MAJOR}.{VERSION_MINOR}.{VERSION_PATCH}"
-GITHUB_USER = CONFIG['GITHUB_AUTH']['user']
-GITHUB_KEY = CONFIG['GITHUB_AUTH']['key']
+GITHUB_WRITE_RELEASE_TOKEN = CONFIG['GITHUB_WRITE_RELEASE_TOKEN']
 
+
+auth_headers = {
+    "Accept": "application/vnd.github+json",
+    "Authorization": f"Bearer {GITHUB_WRITE_RELEASE_TOKEN}",
+    "X-GitHub-Api-Version": "2022-11-28"
+}
 
 def sha256_checksum(filename, block_size=65536):
     """calculate the SHA256 checksum for a local file"""
@@ -58,7 +62,7 @@ SHA-256: {header_hash} (json.hpp), {include_hash} (include.zip), {xz_hash} (json
     }
 
     r = requests.post(url='https://api.github.com/repos/nlohmann/json/releases',
-                      auth=HTTPBasicAuth(GITHUB_USER, GITHUB_KEY),
+                      headers=auth_headers,
                       json=payload)
     release = r.json()
     print(release)
@@ -80,8 +84,8 @@ SHA-256: {header_hash} (json.hpp), {include_hash} (include.zip), {xz_hash} (json
     for file in files_to_upload:
         params = {'name': file['name']}
         headers = {'Content-Type': file['Content-Type']}
+        headers.update(auth_headers)
         r = requests.post(url=upload_url,
-                          auth=HTTPBasicAuth(GITHUB_USER, GITHUB_KEY),
                           params=params, headers=headers,
                           data=open(os.path.join(path, 'release_files/{filename}'.format(filename=file['name'])), 'rb'))
         print('uploaded file {filename} to github with code {status_code}'.format(filename=file['name'],
