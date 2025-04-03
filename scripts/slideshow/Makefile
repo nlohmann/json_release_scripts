@@ -4,8 +4,8 @@ json.gif: JSON.key
 	osascript export.scpt
 	mv ~/Pictures/JSON*/* .
 	rm -fr ~/Pictures/JSON*
-	convert -delay 1500 -loop 0 *.png json2.gif 
-	convert json2.gif json.gif
+	magick convert -delay 1500 -loop 0 *.png json2.gif
+	magick convert json2.gif json.gif
 	rm json2.gif
 	rm -f *.png
 

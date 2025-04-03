@@ -10,4 +10,4 @@ NEXT_VERSION="$VERSION_MAJOR.$VERSION_MINOR.$VERSION_PATCH"
 cd ../../workdir/json
 
 git add -u
-git commit -m ":bookmark: set version to $NEXT_VERSION"
+git commit --signoff -m ":bookmark: set version to $NEXT_VERSION"

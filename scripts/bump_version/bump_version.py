@@ -68,16 +68,21 @@ def patch_release(path):
 
     version_replace('CMakeLists.txt', None, 'project(nlohmann_json', VERSION)
     version_replace('meson.build', None, 'version', VERSION)
-    version_replace('wsjcpp.yml', None, 'version: "v3', VERSION)
     version_replace('.github/ISSUE_TEMPLATE/bug.yaml', None, 'please enter the version number', VERSION)
     version_replace('CITATION.cff', None, 'version: 3', VERSION)
-    version_replace('docs/examples/nlohmann_json_version.output', None, 'version', VERSION)
+    version_replace('docs/mkdocs/docs/examples/nlohmann_json_version.output', None, 'version', VERSION)
     version_replace('README.md', None, 'FetchContent_Declare', VERSION)
+    version_replace('README.md', None, '  find_package(nlohmann_json', VERSION)
+    version_replace('README.md', None, 'find_package(nlohmann_json', VERSION)
     version_replace('docs/docset/docset.json', None, 'version', VERSION)
     version_replace('docs/mkdocs/docs/integration/cmake.md', None, '        find_package(nlohmann_json', VERSION)
     version_replace('docs/mkdocs/docs/integration/cmake.md', None, 'find_package(nlohmann_json', VERSION)
     version_replace('docs/mkdocs/docs/integration/cmake.md', None, 'FetchContent_Declare', VERSION)
     version_replace('docs/mkdocs/docs/integration/cmake.md', None, 'GIT_TAG', VERSION)
+    version_replace('docs/mkdocs/docs/integration/package_managers.md', None, 'cget install nlohmann/json@', VERSION)
+    version_replace('docs/mkdocs/docs/integration/package_managers.md', None, 'CPMAddPackage("gh:nlohmann/json@', VERSION)
+    version_replace('docs/mkdocs/docs/integration/conan/Conanfile.txt', None, 'nlohmann_json/', VERSION)
+    version_replace('docs/mkdocs/docs/integration/cpm/CMakeLists.txt', None, 'CPMAddPackage("gh:nlohmann/json@', VERSION)
 
     ###############
     # meta() test #
@@ -125,16 +130,16 @@ if __name__ == '__main__':
     print('creating single-header file')
     os.remove(os.path.join(path, 'single_include/nlohmann/json.hpp'))
     os.remove(os.path.join(path, 'single_include/nlohmann/json_fwd.hpp'))
-    #subprocess.check_output(['make', 'amalgamate'], cwd=path)
+    subprocess.check_output(['make', 'amalgamate'], cwd=path)
     # three lines below are a fix to the astyle call
-    subprocess.check_output(['make', 'single_include/nlohmann/json.hpp'], cwd=path)
-    subprocess.check_output(['make', 'single_include/nlohmann/json_fwd.hpp'], cwd=path)
-    amalgated_files = list(glob.glob('include/**/*.hpp', recursive=True)) + list(glob.glob('include/**/*.hpp', recursive=True)) + ['single_include/nlohmann/json.hpp', 'single_include/nlohmann/json_fwd.hpp']
-    subprocess.check_output(['/Users/niels/Downloads/astyle/build/astyle', '--style=allman', '--indent=spaces=4', '--indent-modifiers', '--indent-switches', '--indent-preproc-block', '--indent-preproc-define', '--indent-col1-comments', '--pad-oper', '--pad-header', '--align-pointer=type', '--align-reference=type', '--add-braces', '--convert-tabs', '--close-templates', '--lineend=linux', '--preserve-date', '--suffix=none', '--formatted'] + amalgated_files, cwd=path)
+    #subprocess.check_output(['make', 'single_include/nlohmann/json.hpp'], cwd=path)
+    #subprocess.check_output(['make', 'single_include/nlohmann/json_fwd.hpp'], cwd=path)
+    #amalgated_files = list(glob.glob('include/**/*.hpp', recursive=True)) + list(glob.glob('include/**/*.hpp', recursive=True)) + ['single_include/nlohmann/json.hpp', 'single_include/nlohmann/json_fwd.hpp']
+    #subprocess.check_output(['/Users/niels/Downloads/astyle/build/astyle', '--style=allman', '--indent=spaces=4', '--indent-modifiers', '--indent-switches', '--indent-preproc-block', '--indent-preproc-define', '--indent-col1-comments', '--pad-oper', '--pad-header', '--align-pointer=type', '--align-reference=type', '--add-braces', '--convert-tabs', '--close-templates', '--lineend=linux', '--preserve-date', '--suffix=none', '--formatted'] + amalgated_files, cwd=path)
 
     # remove output files
     print('removing example output files')
-    for f in glob.glob(os.path.join(path, 'docs', 'examples', '*.output')):
+    for f in glob.glob(os.path.join(path, 'docs' ,'mkdocs', 'docs', 'examples', '*.output')):
         os.remove(f)
 
     # re-generate output
@@ -143,6 +148,12 @@ if __name__ == '__main__':
     env = {'CXX': 'g++-12', 'PATH': '/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin'}
     res = subprocess.check_output(['make', 'create_output', '-j16'], cwd=os.path.join(path, 'docs'), env=env)
     assert res, 're-generating example output files failed'
+
+    # update Natvis file
+    print('updating Natvis file')
+    subprocess.check_output(['python3', '-mvenv', 'venv'], cwd=os.path.join(path, 'tools', 'generate_natvis'))
+    subprocess.check_output(['venv/bin/pip3', 'install', '-r', 'requirements.txt'], cwd=os.path.join(path, 'tools', 'generate_natvis'))
+    subprocess.check_output(['venv/bin/python3', 'generate_natvis.py', '--version', VERSION, os.path.abspath(path)], cwd=os.path.join(path, 'tools', 'generate_natvis'))
 
     # add changed files to git
     subprocess.check_output(['git', 'add', '-u'])
