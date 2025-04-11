@@ -99,6 +99,21 @@ def patch_release(path):
 
     version_replace('include/nlohmann/json.hpp', None, '961c151d2e87f2686a955a9be24d316f1362bf21', VERSION)
 
+    ########
+    # year #
+    ########
+
+    current_year = datetime.date.today().year
+    version_replace('include/nlohmann/json.hpp', None, 'result["copyright"]', f"2013-{current_year}", r"[0-9]{4}-[0-9]{4}")
+    version_replace('LICENSE.MIT', None, 'Copyright (c)', f"2013-{current_year}", r"[0-9]{4}-[0-9]{4}")
+    version_replace('README.md', None, 'Copyright &copy;', f"2013-{current_year}", r"[0-9]{4}-[0-9]{4}")
+    version_replace('README.md', None, 'Though it\'s 2025 already', f"{current_year}", r"[0-9]{4}")
+    version_replace('tests/src/unit-meta.cpp', None, 'j["copyright"]', f"2013-{current_year}", r"[0-9]{4}-[0-9]{4}")
+    version_replace('docs/mkdocs/mkdocs.yml', None, 'Copyright &copy;', f"2013-{current_year}", r"[0-9]{4}-[0-9]{4}")
+    version_replace('docs/mkdocs/docs/home/license.md', None, 'Copyright &copy;', f"2013-{current_year}", r"[0-9]{4}-[0-9]{4}")
+    version_replace('Makefile', None, 'pipx run reuse annotate --recursive single_include', f"2013-{current_year}", r"[0-9]{4}-[0-9]{4}")
+    version_replace('Makefile', None, 'pipx run reuse annotate $(TESTS_SRCS)', f"2013-{current_year}", r"[0-9]{4}-[0-9]{4}")
+
     ######################
     # version definition #
     ######################

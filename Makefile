@@ -42,7 +42,8 @@ pass_2: update_avatars check_documentation commit_changes
 pass_3: push_changes create_release_draft
 
 # do release
-pass_4: upload_documentation close_branches
+#pass_4: upload_documentation close_branches
+pass_4: close_branches
 
 
 ##########################################################
